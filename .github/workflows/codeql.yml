@@ -96,3 +96,17 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:${{matrix.language}}"
+
+    - name: Show total issues in SARIF file
+      run: |
+        for f in $(find . -name "*.sarif"); do
+          echo "File: $f"
+          count=$(jq '[.runs[].results[]] | length' "$f")
+          echo "Total issues: $count"
+        done
+
+    - name: Upload CodeQL SARIF file
+      uses: actions/upload-artifact@v4.6.2
+      with:
+        name: codeql-sarif
+        path: '**/*.sarif'
